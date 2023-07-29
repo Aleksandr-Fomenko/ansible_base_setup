@@ -1,0 +1,45 @@
+---
+
+- name: Add host to freeipa domain
+  block:
+    - name: Deploy resolv.conf template
+      template:
+        src: templates/resolv.conf.j2
+        dest: /etc/resolv.conf
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+      notify:
+        - restart NetworkManager
+
+    - name: Check ipa-client host
+      ipa_host:
+        name: "{{ inventory_hostname }}"
+        state: present
+        ipa_host: "{{ freeipa_master_host }}.{{ freeipa_domain }}"
+        ipa_user: "{{ freeipa_admin_user }}"
+        ipa_pass: "{{ freeipa_admin_pass }}"
+        validate_certs: no
+      check_mode: yes
+      register: host_exists
+
+    - name: Setup ipa-client
+      shell: >
+        /usr/sbin/ipa-client-install -d --mkhomedir --unattended
+        --domain {{ freeipa_domain }}
+        --hostname {{ inventory_hostname }}
+        --principal {{ freeipa_admin_user }}
+        --password "{{ freeipa_admin_pass }}"
+        --realm {{ freeipa_domain | upper }}
+        --server {{ freeipa_master_host }}.{{ freeipa_domain }}
+      when: host_exists.changed
+  when: add_to_domain
+  notify:
+    - restart sssd     
+    - restart NetworkManager
+  
+  rescue:
+  - name: Problem with "Add host to freeipa domain"
+    debug:
+      msg: '"Add host ro freeipa domain" was unsuccessfull'

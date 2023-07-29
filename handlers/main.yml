@@ -1,2 +1,10 @@
 ---
-# handlers file for base_setup
+- name: reload NetworkManager
+  systemd:
+    name: NetworkManager
+    state: restarted
+
+- name: reload sssd
+  systemd:
+    name: sssd
+    state: restarted

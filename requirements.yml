@@ -1,3 +1,0 @@
-- name: base_setup
-  src: https://github.com/Aleksandr-Fomenko/base_setup.git
-  version: develop

@@ -1,0 +1,15 @@
+---
+packages:
+  CentOS:
+    "8":
+      - freeipa-client
+      - vim
+    "9":
+      - freeipa-client
+      - vim
+      - nano
+
+set_timezone: "Europe/Moscow"
+set_locale: "en_US.UTF-8"
+
+add_to_domain: false

@@ -4,7 +4,7 @@
     name: NetworkManager
     state: restarted
 
-- name: testart sssd
+- name: restart sssd
   systemd:
     name: sssd
     state: restarted

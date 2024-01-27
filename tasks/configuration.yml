@@ -17,14 +17,22 @@
   changed_when: False
   when: '"immutable" in get_stat.stat.attributes'
 
-- name: Update /etc/hosts
-  blockinfile:
-      path: /etc/hosts
-      create: yes
-      block: |
-        127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-        ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-        {{ ansible_ssh_host }} {{ inventory_hostname }}
+- name: Deploy file hosts template
+  template:
+    src: templates/hosts.j2
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: 0644
+
+# - name: Update /etc/hosts
+#   blockinfile:
+#       path: /etc/hosts
+#       create: yes
+#       block: |
+#         127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+#         ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+#         {{ ansible_ssh_host }} {{ inventory_hostname }}
 
 - name: Chattr +i /etc/hosts
   file:

@@ -88,7 +88,7 @@
 
 - name: Reread {{ ipv6_sysctl_file }}
   command: "sysctl -p {{ ipv6_sysctl_file }}"
-  when: need_disable_ipv6
+  when: need_disable_ipv6.changed
 
 - name: Force all notified handlers to run at this point, not waiting for normal sync points
   meta: flush_handlers

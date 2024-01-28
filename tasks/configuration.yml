@@ -1,5 +1,4 @@
 ---
-
 - name: Set hostname
   hostname:
     name: "{{ inventory_hostname }}"
@@ -79,14 +78,20 @@
 
 - name: Disable IPv6 with sysctl
   ansible.posix.sysctl:
-    name: "{{ item }}"
-    value: "1"
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
     state: "present"
     reload: "yes"
-  with_items:
-    - net.ipv6.conf.all.disable_ipv6
-    - net.ipv6.conf.default.disable_ipv6
-    - net.ipv6.conf.lo.disable_ipv6
+  with_dict: "{{ ipv6_sysctl_params }}"
+
+- name: Deploy resolv.conf template
+  template:
+    src: templates/resolv.conf.j2
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
 
 - name: Force all notified handlers to run at this point, not waiting for normal sync points
   meta: flush_handlers

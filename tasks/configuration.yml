@@ -84,15 +84,6 @@
     reload: "yes"
   with_dict: "{{ ipv6_sysctl_params }}"
 
-- name: Deploy resolv.conf template
-  template:
-    src: templates/resolv.conf.j2
-    dest: /etc/resolv.conf
-    owner: root
-    group: root
-    mode: 0644
-    backup: yes
-
 - name: Force all notified handlers to run at this point, not waiting for normal sync points
   meta: flush_handlers
 

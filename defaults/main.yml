@@ -1,9 +1,6 @@
 ---
 packages:
   CentOS:
-    "8":
-      - freeipa-client
-      - vim
     "9":
       - freeipa-client
       - vim
@@ -14,7 +11,7 @@ ipv6_sysctl_params:
   "net.ipv6.conf.default.disable_ipv6": "1"
   "net.ipv6.conf.lo.disable_ipv6": "0"
 
-ipv6_sysctl_file: /etc/sysctl.conf
+ipv6_sysctl_file: /etc/sysctl.d/99-sysctl.conf
 
 set_timezone: "Europe/Moscow"
 set_locale: "en_US.UTF-8"

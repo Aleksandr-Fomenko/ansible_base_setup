@@ -25,15 +25,6 @@
     group: root
     mode: 0644
 
-# - name: Update /etc/hosts
-#   blockinfile:
-#       path: /etc/hosts
-#       create: yes
-#       block: |
-#         127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-#         ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-#         {{ ansible_ssh_host }} {{ inventory_hostname }}
-
 - name: Chattr +i /etc/hosts
   file:
     path: /etc/hosts
@@ -85,6 +76,20 @@
 - name: Set locale {{ set_locale }}
   command: "localectl set-locale LANG={{ set_locale }}"
   when: need_set_locale.changed
+
+- name: Disable IPv6 with sysctl
+  ansible.posix.sysctl:
+    name: "{{ item }}"
+    value: "1"
+    state: "present"
+    reload: "yes"
+  with_items:
+    - net.ipv6.conf.all.disable_ipv6
+    - net.ipv6.conf.default.disable_ipv6
+    - net.ipv6.conf.lo.disable_ipv6
+
+- name: Force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers
 
 - name: Update {{ ansible_distribution }} hosts
   yum:

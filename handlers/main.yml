@@ -1,10 +1,10 @@
 ---
-- name: reload NetworkManager
+- name: restart NetworkManager
   systemd:
     name: NetworkManager
     state: restarted
 
-- name: reload sssd
+- name: restart sssd
   systemd:
     name: sssd
     state: restarted

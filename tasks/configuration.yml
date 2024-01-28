@@ -1,5 +1,4 @@
 ---
-
 - name: Set hostname
   hostname:
     name: "{{ inventory_hostname }}"
@@ -17,14 +16,13 @@
   changed_when: False
   when: '"immutable" in get_stat.stat.attributes'
 
-- name: Update /etc/hosts
-  blockinfile:
-      path: /etc/hosts
-      create: yes
-      block: |
-        127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-        ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-        {{ ansible_ssh_host }} {{ inventory_hostname }}
+- name: Deploy file hosts template
+  template:
+    src: templates/hosts.j2
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Chattr +i /etc/hosts
   file:
@@ -77,6 +75,18 @@
 - name: Set locale {{ set_locale }}
   command: "localectl set-locale LANG={{ set_locale }}"
   when: need_set_locale.changed
+
+- name: Disable IPv6 with sysctl
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_file: "{{ ipv6_sysctl_file }}"
+    state: "present"
+    reload: true
+  with_dict: "{{ ipv6_sysctl_params }}"
+
+- name: Force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers
 
 - name: Update {{ ansible_distribution }} hosts
   yum:

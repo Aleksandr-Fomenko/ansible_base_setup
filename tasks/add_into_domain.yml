@@ -2,6 +2,7 @@
 
 - name: Add host to freeipa domain
   block:
+
     - name: Deploy resolv.conf template
       template:
         src: templates/resolv.conf.j2
@@ -10,8 +11,6 @@
         group: root
         mode: 0644
         backup: yes
-      notify:
-        - restart NetworkManager
 
     - name: Check ipa-client host
       ipa_host:

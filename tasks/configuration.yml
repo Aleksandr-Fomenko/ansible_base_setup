@@ -80,9 +80,15 @@
   sysctl:
     name: "{{ item.key }}"
     value: "{{ item.value }}"
+    sysctl_file: "{{ ipv6_sysctl_file }}"
     state: "present"
     reload: true
   with_dict: "{{ ipv6_sysctl_params }}"
+  register: need_disable_ipv6
+
+- name: Reread {{ ipv6_sysctl_file }}
+  command: "sysctl -p {{ ipv6_sysctl_file }}"
+  when: need_disable_ipv6
 
 - name: Force all notified handlers to run at this point, not waiting for normal sync points
   meta: flush_handlers

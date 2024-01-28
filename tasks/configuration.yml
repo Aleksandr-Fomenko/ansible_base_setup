@@ -77,11 +77,11 @@
   when: need_set_locale.changed
 
 - name: Disable IPv6 with sysctl
-  ansible.posix.sysctl:
+  sysctl:
     name: "{{ item.key }}"
     value: "{{ item.value }}"
     state: "present"
-    reload: "yes"
+    reload: true
   with_dict: "{{ ipv6_sysctl_params }}"
 
 - name: Force all notified handlers to run at this point, not waiting for normal sync points
